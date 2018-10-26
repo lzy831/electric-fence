@@ -1,12 +1,12 @@
-ASFLAGS= -mips2
-CC= cc
-AR= ar
+# ASFLAGS= -mips2
+# CC= cc
+# AR= ar
 INSTALL= install
-MV= mv
-CHMOD= chmod
-CFLAGS= -g
-LIB_INSTALL_DIR= /usr/lib
-MAN_INSTALL_DIR= /usr/man/man3
+# MV= mv
+# CHMOD= chmod
+CFLAGS= -g -std=gnu99
+# LIB_INSTALL_DIR= /usr/lib
+# MAN_INSTALL_DIR= /usr/man/man3
 
 ifeq ($(OS),Windows_NT)
 	# get a better computer
@@ -38,20 +38,20 @@ PACKAGE_SOURCE= README libefence.3 Makefile efence.h \
 OBJECTS= efence.o page.o print.o
 
 all:	libefence.a tstheap eftest
-	@ echo
-	@ echo "Testing Electric Fence."
-	@ echo "After the last test, it should print that the test has PASSED."
-	./eftest
-	./tstheap 3072
-	@ echo
-	@ echo "Electric Fence confidence test PASSED." 
-	@ echo
+	# @ echo
+	# @ echo "Testing Electric Fence."
+	# @ echo "After the last test, it should print that the test has PASSED."
+	# ./eftest
+	# ./tstheap 3072
+	# @ echo
+	# @ echo "Electric Fence confidence test PASSED." 
+	# @ echo
 
 install: libefence.a libefence.3
-	$(MV) libefence.a $(LIB_INSTALL_DIR)
-	$(CHMOD) 644 $(LIB_INSTALL_DIR)/libefence.a
-	$(INSTALL) libefence.3 $(MAN_INSTALL_DIR)/libefence.3
-	$(CHMOD) 644 $(MAN_INSTALL_DIR)/libefence.3
+	@echo "DESTDIR = ${DESTDIR}"
+	@echo "libdir = ${libdir}"
+	mkdir -p "$(DESTDIR)/$(libdir)"
+	${INSTALL} -m 644 -p libefence.a $(DESTDIR)/$(libdir)/libefence.a
 
 clean:
 	- rm -f $(OBJECTS) tstheap.o eftest.o tstheap eftest libefence.a \

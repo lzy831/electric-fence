@@ -198,25 +198,35 @@ static pid_t mutexpid=0;
 static int locknr=0;
 
 
-static void lock() {
-    if (pthread_mutex_trylock(&mutex)) {
-       if (mutexpid==getpid()) {
-           locknr++;
-           return;
-       } else {
-           pthread_mutex_lock(&mutex);
-       }
-    } 
-    mutexpid=getpid();
-    locknr=1;
+// static void lock() {
+//     if (pthread_mutex_trylock(&mutex)) {
+//        if (mutexpid==getpid()) {
+//            locknr++;
+//            return;
+//        } else {
+//            pthread_mutex_lock(&mutex);
+//        }
+//     }
+//     mutexpid=getpid();
+//     locknr=1;
+// }
+
+// static void unlock() {
+//     locknr--;
+//     if (!locknr) {
+//        mutexpid=0;
+//        pthread_mutex_unlock(&mutex);
+//     }
+// }
+
+static void lock()
+{
+	pthread_mutex_lock(&mutex);
 }
 
-static void unlock() {
-    locknr--;
-    if (!locknr) {
-       mutexpid=0;
-       pthread_mutex_unlock(&mutex);
-    }
+static void unlock()
+{
+	pthread_mutex_unlock(&mutex);
 }
 
 /*
@@ -814,9 +824,12 @@ malloc(size_t size)
         void  *allocation;   
  
         if ( allocationList == 0 ) {
-                pthread_mutex_init(&mutex, NULL); 
+                pthread_mutexattr_t attr;
+                pthread_mutexattr_init(&attr);
+                pthread_mutexattr_settype(&attr,PTHREAD_MUTEX_RECURSIVE );
+                pthread_mutex_init(&mutex, &attr);
                 initialize();   /* This sets EF_ALIGNMENT */
-        }       
+        }
         lock();
         allocation=memalign(EF_ALIGNMENT, size); 
 
